@@ -5,6 +5,8 @@ import 'package:formvalidator/src/utils/utils.dart';
 
 class RegistroPage extends StatelessWidget {
 
+  
+
   final usuarioProvider = new UsuarioProvider();
 
   @override
@@ -20,7 +22,7 @@ class RegistroPage extends StatelessWidget {
     );
   }
 
-  Widget _loginForm( BuildContext context){
+Widget _loginForm( BuildContext context){
 
   final bloc = Provider.of(context);
    final size = MediaQuery.of(context).size;
@@ -52,6 +54,10 @@ class RegistroPage extends StatelessWidget {
              children: [
                Text('Registro', style: TextStyle(fontSize: 20.0)),
                SizedBox(height: 60.0),
+               _crearNombre(bloc),
+               SizedBox(height: 30.0),
+               _crearUser(bloc),
+               SizedBox(height: 30.0),
               _crearEmail(bloc),
                SizedBox(height: 30.0),
                 _crearPassword(bloc),
@@ -88,11 +94,11 @@ return StreamBuilder(
 );
 
 }
- _register(LoginBloc bloc, BuildContext context)async {
+ _register(LoginBloc bloc, BuildContext context) async {
 
-   Map info = await usuarioProvider.nuevoUsuario(bloc.email, bloc.password);
+    final info = await usuarioProvider.nuevoUsuario(bloc.nombre, bloc.user, bloc.email, bloc.password);
+
   
-
   if(info['ok']){
     Navigator.pushReplacementNamed(context, 'home');
    }else{
@@ -100,6 +106,52 @@ return StreamBuilder(
    }
 
  }
+
+  _crearNombre(LoginBloc bloc) {
+   return StreamBuilder(
+     stream: bloc.nombreStream ,
+     builder: (BuildContext context, AsyncSnapshot snapshot){
+     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child:TextField(
+        decoration:InputDecoration(
+          hintText: 'Nombre y Apellido',
+          labelText: 'Nombre',
+          counterText: snapshot.data,
+          errorText: snapshot.error
+        ) ,
+        onChanged: (value) => bloc.changeNombre(value),
+      ) ,
+    );
+     },
+   );
+
+ 
+
+  }
+   _crearUser(LoginBloc bloc) {
+    return StreamBuilder(
+     stream: bloc.userStream ,
+     builder: (BuildContext context, AsyncSnapshot snapshot){
+     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child:TextField(
+        keyboardType: TextInputType.emailAddress,
+        decoration:InputDecoration(
+          icon: Icon(Icons.alternate_email, color:Colors.deepPurple),
+          hintText: 'juan12',
+          labelText: 'Usuario',
+          counterText: snapshot.data,
+          errorText: snapshot.error
+        ) ,
+        onChanged: (value) => bloc.changeUser(value),
+      ) ,
+    );
+     },
+   );
+ 
+
+  }
 
  Widget _crearEmail(LoginBloc bloc) {
 
@@ -197,6 +249,8 @@ return StreamBuilder(
    );
 
  }
+
+ 
 
  
 
